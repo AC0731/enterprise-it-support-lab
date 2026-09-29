@@ -7,7 +7,7 @@ from supportkit.scenarios import (
 )
 
 
-class ControlledIncidentTests(unittest.TestCase):
+class TroubleshootingCaseTests(unittest.TestCase):
     def test_dns_failure_moves_from_warn_to_pass(self):
         scenario = dns_failure_scenario()
         self.assertEqual(scenario["before"]["status"], "WARN")

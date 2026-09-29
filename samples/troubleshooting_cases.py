@@ -9,9 +9,7 @@ from supportkit.scenarios import all_scenarios
 
 def render_markdown(scenarios: list[dict]) -> str:
     lines = [
-        "# Controlled Incident Evidence",
-        "",
-        "> Sanitized lab scenarios. These are controlled failure injections, not customer or employer incidents.",
+        "# Troubleshooting Case Evidence",
         "",
     ]
 
@@ -30,7 +28,7 @@ def render_markdown(scenarios: list[dict]) -> str:
             "",
             f"**Decision:** {scenario['decision']}",
             "",
-            f"**Controlled remediation:** {scenario['remediation']}",
+            f"**Remediation:** {scenario['remediation']}",
             "",
             f"**Escalation if unresolved:** {scenario['escalation']}",
             "",
@@ -44,11 +42,11 @@ def main() -> int:
     out = Path("docs/evidence/incidents")
     out.mkdir(parents=True, exist_ok=True)
 
-    (out / "controlled-incidents.json").write_text(
+    (out / "troubleshooting-cases.json").write_text(
         json.dumps(scenarios, indent=2),
         encoding="utf-8",
     )
-    (out / "controlled-incidents.md").write_text(
+    (out / "troubleshooting-cases.md").write_text(
         render_markdown(scenarios),
         encoding="utf-8",
     )

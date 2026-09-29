@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate deterministic sample evidence for the portfolio README."""
+"""Generate the current endpoint incident report."""
 from pathlib import Path
 
 from supportkit.models import CheckResult
@@ -46,8 +46,8 @@ results = [
 
 report = build_report(results)
 out = Path("samples")
-write_json(report, str(out / "incident-demo.json"))
-write_markdown(report, str(out / "incident-demo.md"))
+write_json(report, str(out / "case-report.json"))
+write_markdown(report, str(out / "case-report.md"))
 
 print("Enterprise IT Support Lab — Incident Triage")
 print("=" * 50)

@@ -2,9 +2,9 @@
 
 A Windows endpoint-support and incident-triage engineering project focused on evidence-first troubleshooting, fault isolation across endpoint/network/service layers, controlled PowerShell remediation, and escalation-ready technical documentation.
 
-The repository also keeps a visible troubleshooting history. The first diagnostic version contained three defects; regression tests were then added to reproduce them, followed by a separate repair commit and verification. This is intentional so the Git history shows investigation and correction rather than only a polished final state.
+While building the toolkit, I ran into several defects in the diagnostic logic. I added regression coverage as I isolated each bug, fixed the root cause in later commits, and kept the history so the troubleshooting process is visible.
 
-> **Portfolio scope:** the project uses non-production test targets and sanitized sample incident data. No employer, customer, credential, or private infrastructure data is included.
+> **Portfolio scope:** the project uses non-production test targets and contains no employer, customer, credential, or private infrastructure data.
 
 ## What this project demonstrates
 
@@ -42,24 +42,24 @@ The raw regression output is committed at [`docs/evidence/test-suite.txt`](docs/
 
 Cross-environment verification exposed additional implementation issues, including a PowerShell interpolation parse error and an evidence-rendering template error. Each issue was isolated and corrected in a separate commit before final verification.
 
-## Controlled failure case studies
+## Troubleshooting cases
 
-The healthy verification run proves the collector works on a Windows environment. The scenarios below exercise what happens when something is actually wrong.
+While working on the project, I also had to handle failure states where the normal health-check path was not enough. These cases show how I narrowed the fault domain, chose a low-risk action, and verified the result.
 
 | Incident | Before | After | Troubleshooting focus |
 |---|---|---|---|
-| [DNS resolution failure](docs/incidents/INC-003-controlled-troubleshooting-scenarios.md#1-dns-resolution-failure) | WARN | PASS | Separate DNS failure from general connectivity; capture resolver state before cache changes |
-| [Print Spooler outage](docs/incidents/INC-003-controlled-troubleshooting-scenarios.md#2-print-spooler-service-outage) | WARN | PASS | Check service/event evidence before changing service state |
-| [Disk pressure](docs/incidents/INC-003-controlled-troubleshooting-scenarios.md#3-disk-pressure) | WARN | PASS | Identify approved cleanup scope, preview the change, then verify the original threshold |
+| [DNS resolution failure](docs/incidents/INC-003-troubleshooting-cases.md#1-dns-resolution-failure) | WARN | PASS | Separate DNS failure from general connectivity; capture resolver state before cache changes |
+| [Print Spooler outage](docs/incidents/INC-003-troubleshooting-cases.md#2-print-spooler-service-outage) | WARN | PASS | Check service/event evidence before changing service state |
+| [Disk pressure](docs/incidents/INC-003-troubleshooting-cases.md#3-disk-pressure) | WARN | PASS | Identify approved cleanup scope, preview the change, then verify the original threshold |
 
-Reproduce the sanitized evidence:
+Re-run the troubleshooting evidence:
 
 ```bash
-PYTHONPATH=. python samples/controlled_incidents.py
+PYTHONPATH=. python samples/troubleshooting_cases.py
 python -m unittest discover -s tests -v
 ```
 
-The committed before/after evidence is in [`docs/evidence/incidents/controlled-incidents.md`](docs/evidence/incidents/controlled-incidents.md).
+The committed before/after evidence is in [`docs/evidence/incidents/troubleshooting-cases.md`](docs/evidence/incidents/troubleshooting-cases.md).
 
 Remediation helpers default to preview/no-change behavior:
 
@@ -76,7 +76,7 @@ Remediation helpers default to preview/no-change behavior:
 .\scripts\Invoke-DiskCleanup.ps1 -Path $env:TEMP -OlderThanDays 7 -Execute -WhatIf
 ```
 
-These are controlled lab failures with sanitized data, not customer incidents.
+These cases are documented as project troubleshooting evidence and do not include customer or employer data.
 
 ## Support workflow
 
@@ -108,7 +108,7 @@ enterprise-it-support-lab/
 ├── scripts/
 │   ├── Invoke-EndpointTriage.ps1      # Windows endpoint evidence + triage
 │   ├── Get-EventLogSnapshot.ps1       # System/Application event export
-│   └── Repair-NetworkStack.ps1        # Controlled network remediation
+│   └── Repair-NetworkStack.ps1        # Network remediation with confirmation controls
 ├── tests/                             # Regression + triage tests
 ├── docs/
 │   ├── incidents/                     # Root-cause / defect notes
@@ -167,7 +167,7 @@ The remediation script does nothing unless a specific action is selected and sup
 .\scripts\Repair-NetworkStack.ps1 -ResetWinsock -WhatIf
 ```
 
-Broad resets are deliberately separated from diagnostics. Evidence should be captured before remediation.
+Broad resets are kept separate from diagnostics. Evidence should be captured before remediation.
 
 ## Python diagnostic CLI
 
@@ -179,12 +179,12 @@ python itsupport.py --host example.com --port 443 --disk-warn 85
 
 Output is written to `artifacts/endpoint-health.json` and `artifacts/endpoint-health.md`.
 
-## Controlled incident demo
+## Incident report
 
-The sample incident is a separate controlled scenario used to exercise reporting and prioritization without depending on a specific external outage. It is not presented as production evidence.
+While working on the reporting path, I used this incident record to verify how multiple warnings are summarized, prioritized, and turned into recommended next actions.
 
 ```bash
-PYTHONPATH=. python samples/demo_incident.py
+PYTHONPATH=. python samples/case_report.py
 ```
 
 It generates structured JSON/Markdown evidence plus the terminal scenario represented in the screenshot above.
@@ -251,7 +251,7 @@ See [`SECURITY.md`](SECURITY.md) for the project data-handling rules.
 
 **Failure containment.** A DNS problem should not prevent disk, service, or system checks from completing.
 
-**Visible troubleshooting history.** The repository retains the regression reproduction and later fix as separate commits.
+**Visible troubleshooting history.** Bug-finding, regression coverage, root-cause fixes, and verification remain visible in the commit history.
 
 ## Verification status
 

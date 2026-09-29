@@ -1,11 +1,11 @@
 # INC-001 — Diagnostic reliability regressions
 
-**Status:** Reproduced  
+**Status:** Resolved  
 **Scope:** Disk thresholding, DNS failure handling, Windows-style service status normalization
 
 ## Symptoms
 
-During test expansion, three reliability defects were reproduced:
+While expanding the diagnostic checks, I ran into three reliability defects:
 
 1. A disk at 90% utilization could be reported as healthy with an 85% warning threshold.
 2. A DNS resolver exception could terminate the complete diagnostic run instead of producing a contained warning result.
@@ -15,7 +15,7 @@ During test expansion, three reliability defects were reproduced:
 
 These defects reduce trust in endpoint triage output. The disk defect can hide a capacity issue; the DNS defect can prevent collection of unrelated checks; the service-state defect creates false positives.
 
-## Reproduction
+## What I checked
 
 Run:
 
@@ -23,7 +23,7 @@ Run:
 python -m unittest discover -s tests -v
 ```
 
-The regression suite is intentionally committed before the repair so the defect discovery is visible in repository history.
+Once I isolated the behavior, I added regression coverage for it and fixed the root cause in the following changes. The commit history keeps that sequence visible.
 
 ## Root cause
 

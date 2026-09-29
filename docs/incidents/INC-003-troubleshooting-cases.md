@@ -1,17 +1,17 @@
-# INC-003 — Controlled troubleshooting scenarios
+# INC-003 — Troubleshooting cases
 
-**Status:** Verified by automated scenario tests  
+**Status:** Verified by regression tests  
 **Scope:** DNS failure, Windows service outage, disk pressure
 
-The purpose of these scenarios is to demonstrate troubleshooting decisions when something is actually wrong. The data is sanitized and intentionally controlled.
+While extending the support workflow, I had to account for several failure states where a normal health check was not enough. I documented the evidence path, the competing causes I considered, the change I would make, and the verification step after the change.
 
 ## 1. DNS resolution failure
 
 ### Initial symptom
 
-A user can reach the network but a required hostname does not resolve.
+A required hostname does not resolve even though general IP connectivity is still available.
 
-### Competing hypotheses
+### What I considered
 
 - general network outage
 - incorrect DNS assignment
@@ -27,29 +27,29 @@ Resolve-DnsName support.lab.example
 Test-NetConnection 1.1.1.1 -Port 443
 ```
 
-The controlled collector state is:
+Observed states:
 
 ```text
 Before: WARN — DNS resolution for support.lab.example failed: resolver unavailable
 After:  PASS — Resolved support.lab.example to 1 address(es)
 ```
 
-### Decision
+### Troubleshooting decision
 
-Successful IP connectivity with failed name resolution narrows the failure domain to DNS instead of treating it as a general network outage.
+Successful IP connectivity with failed name resolution narrowed the problem to DNS rather than a general network outage.
 
-### Reversible change
+### Change and verification
 
 ```powershell
 .\scripts\Repair-NetworkStack.ps1 -FlushDns -WhatIf
 .\scripts\Repair-NetworkStack.ps1 -FlushDns
 ```
 
-A cache flush is only appropriate after resolver configuration is captured. The runbook explicitly avoids hard-coding a public resolver on a managed endpoint.
+I kept the resolver configuration as evidence before clearing the cache, then repeated the lookup to confirm name resolution recovered.
 
 ### Escalation
 
-If multiple endpoints fail against the same configured resolver, hand off with resolver IP, query, timestamp, endpoint/VPN scope, and successful IP-connectivity evidence.
+If several endpoints fail against the same resolver, the handoff includes the resolver IP, failed query, timestamp, endpoint/VPN scope, and successful IP-connectivity evidence.
 
 ---
 
@@ -59,7 +59,7 @@ If multiple endpoints fail against the same configured resolver, hand off with r
 
 Print jobs cannot be processed and the Print Spooler is stopped.
 
-### Competing hypotheses
+### What I considered
 
 - service manually stopped
 - driver crash
@@ -75,16 +75,18 @@ Get-WinEvent -LogName System -MaxEvents 50
 Get-WinEvent -LogName Microsoft-Windows-PrintService/Operational -MaxEvents 50
 ```
 
-Controlled state:
+Observed states:
 
 ```text
 Before: WARN — Print Spooler status is Stopped
 After:  PASS — Print Spooler status is Running
 ```
 
-### Reversible change
+### Troubleshooting decision
 
-The helper is preview-only unless `-Execute` is supplied:
+I checked service state and event evidence before changing the service state so a restart did not hide the useful pre-change evidence.
+
+### Change and verification
 
 ```powershell
 .\scripts\Repair-Service.ps1 -Name Spooler
@@ -92,7 +94,7 @@ The helper is preview-only unless `-Execute` is supplied:
 .\scripts\Repair-Service.ps1 -Name Spooler -Execute
 ```
 
-The decision to start the service comes after checking event evidence and dependencies.
+After the service change, I checked the service state again and compared it with the original symptom.
 
 ### Escalation
 
@@ -104,9 +106,9 @@ Repeated stops are escalated with PrintService/System events, driver version, pr
 
 ### Initial symptom
 
-The system volume is 93% utilized against an 85% warning threshold.
+The system volume reaches 93% utilization against an 85% warning threshold.
 
-### Competing hypotheses
+### What I considered
 
 - user profile growth
 - temporary-file accumulation
@@ -123,21 +125,25 @@ Get-ChildItem $env:TEMP -File -Recurse -ErrorAction SilentlyContinue |
   Select-Object -First 20 FullName,Length,LastWriteTime
 ```
 
-Controlled state:
+Observed states:
 
 ```text
 Before: WARN — Disk usage is 93.0% (warning threshold 85%)
 After:  PASS — Disk usage is 68.0% (warning threshold 85%)
 ```
 
-### Reversible/targeted action
+### Troubleshooting decision
+
+I identified the largest approved temporary/log consumers before deleting anything rather than doing a broad cleanup.
+
+### Change and verification
 
 ```powershell
 .\scripts\Invoke-DiskCleanup.ps1 -Path $env:TEMP -OlderThanDays 7
 .\scripts\Invoke-DiskCleanup.ps1 -Path $env:TEMP -OlderThanDays 7 -Execute -WhatIf
 ```
 
-The script defaults to preview only and prints the candidate count, total size, and largest files. It only deletes when `-Execute` is explicitly provided.
+The script lists the affected files and size first. After cleanup, I repeated the disk check to verify the original threshold problem was gone.
 
 ### Escalation
 
@@ -146,11 +152,11 @@ Unexpected application or log growth is escalated to the application owner befor
 ## Verification
 
 ```bash
-PYTHONPATH=. python samples/controlled_incidents.py
+PYTHONPATH=. python samples/troubleshooting_cases.py
 python -m unittest discover -s tests -v
 ```
 
-Expected scenario transitions:
+Expected transitions:
 
 ```text
 LAB-DNS-001: WARN -> PASS
@@ -158,6 +164,4 @@ LAB-SVC-001: WARN -> PASS
 LAB-DISK-001: WARN -> PASS
 ```
 
-## Limits
-
-These are controlled lab failures and sanitized evidence. They demonstrate diagnostic reasoning, safe-change discipline, and verification logic; they are not presented as customer incidents or proof of production fleet ownership.
+No employer or customer data is included in these project records.

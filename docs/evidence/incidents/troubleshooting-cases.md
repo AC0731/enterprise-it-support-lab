@@ -1,6 +1,4 @@
-# Controlled Incident Evidence
-
-> Sanitized lab scenarios. These are controlled failure injections, not customer or employer incidents.
+# Troubleshooting Case Evidence
 
 ## LAB-DNS-001
 
@@ -11,11 +9,11 @@
 | Before | WARN | DNS resolution for support.lab.example failed: resolver unavailable |
 | After | PASS | Resolved support.lab.example to 1 address(es) |
 
-**Decision:** Treat as a DNS failure domain rather than a general connectivity outage.
+**Decision:** Treat the problem as a DNS failure domain rather than a general connectivity outage.
 
-**Controlled remediation:** Capture resolver configuration first; flush only the local resolver cache when cache corruption is plausible.
+**Remediation:** Capture resolver configuration first; flush only the local resolver cache when cache corruption is plausible.
 
-**Escalation if unresolved:** If multiple endpoints reproduce the same resolver failure, escalate with resolver IP, query name, timestamps, and affected subnet/VPN scope.
+**Escalation if unresolved:** If multiple endpoints show the same resolver failure, escalate with resolver IP, query name, timestamps, and affected subnet/VPN scope.
 
 ## LAB-SVC-001
 
@@ -28,7 +26,7 @@
 
 **Decision:** Confirm service state and event evidence before changing service state.
 
-**Controlled remediation:** Preview the service start, then start only the affected service if dependencies and recent change history do not indicate a broader fault.
+**Remediation:** Preview the service start, then start only the affected service if dependencies and recent change history do not indicate a broader fault.
 
 **Escalation if unresolved:** Escalate repeated stops with PrintService/System events, driver version, print-server reachability, and the restart timestamp.
 
@@ -43,6 +41,6 @@
 
 **Decision:** Identify approved temporary/log growth before deleting data.
 
-**Controlled remediation:** Preview cleanup of aged temporary files, then remove only the approved scope and recheck the original volume.
+**Remediation:** Preview cleanup of aged temporary files, then remove only the approved scope and recheck the original volume.
 
 **Escalation if unresolved:** Escalate unexpected application/log growth before deleting business or application data.
