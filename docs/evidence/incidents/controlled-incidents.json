@@ -1,0 +1,35 @@
+[
+  {
+    "id": "LAB-DNS-001",
+    "before": {
+      "status": "WARN",
+      "summary": "DNS resolution for support.lab.example failed: resolver unavailable"
+    },
+    "after": {
+      "status": "PASS",
+      "summary": "Resolved support.lab.example to 1 address(es)"
+    }
+  },
+  {
+    "id": "LAB-SVC-001",
+    "before": {
+      "status": "WARN",
+      "summary": "Print Spooler status is Stopped"
+    },
+    "after": {
+      "status": "PASS",
+      "summary": "Print Spooler status is Running"
+    }
+  },
+  {
+    "id": "LAB-DISK-001",
+    "before": {
+      "status": "WARN",
+      "summary": "Disk usage is 93.0% (warning threshold 85%)"
+    },
+    "after": {
+      "status": "PASS",
+      "summary": "Disk usage is 68.0% (warning threshold 85%)"
+    }
+  }
+]
