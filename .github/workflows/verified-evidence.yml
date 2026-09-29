@@ -1,0 +1,87 @@
+name: Verified Windows Lab Evidence
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  capture:
+    runs-on: windows-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Run regression suite
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path docs/evidence | Out-Null
+          $output = & python -m unittest discover -s tests -v 2>&1 | Out-String
+          $output | Set-Content -Path docs/evidence/test-suite.txt -Encoding utf8
+          Write-Host $output
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Run live Windows endpoint triage
+        shell: pwsh
+        run: |
+          $output = & .\scripts\Invoke-EndpointTriage.ps1 -TargetHost "www.microsoft.com" -DiskWarningPercent 85 -CriticalServices Dnscache,Spooler -OutputPath ".\docs\evidence\windows-endpoint-health.json" 2>&1 | Out-String
+          $output | Set-Content -Path docs/evidence/windows-triage.txt -Encoding utf8
+          Write-Host $output
+
+      - name: Write verification metadata
+        shell: pwsh
+        run: |
+          $metadata = [ordered]@{
+            verified_at_utc = (Get-Date).ToUniversalTime().ToString("o")
+            github_run_id = "${{ github.run_id }}"
+            github_run_url = "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+            runner_os = "$env:RUNNER_OS"
+            runner_arch = "$env:RUNNER_ARCH"
+            target = "www.microsoft.com"
+            python = (& python --version)
+          }
+          $metadata | ConvertTo-Json | Set-Content -Path docs/evidence/verification.json -Encoding utf8
+
+      - name: Build evidence pages
+        shell: pwsh
+        run: |
+          python tools/build_evidence_page.py docs/evidence/windows-triage.txt docs/evidence/windows-triage.html "Windows endpoint triage — GitHub-hosted runner"
+          python tools/build_evidence_page.py docs/evidence/test-suite.txt docs/evidence/test-suite.html "Regression test suite — GitHub-hosted runner"
+
+      - name: Capture browser screenshots
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path docs/screenshots | Out-Null
+          $candidates = @(
+            "C:\Program Files\Google\Chrome\Application\chrome.exe",
+            "C:\Program Files\Microsoft\Edge\Application\msedge.exe",
+            "C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe"
+          )
+          $browser = $candidates | Where-Object { Test-Path $_ } | Select-Object -First 1
+          if (-not $browser) { throw "No supported browser found on runner." }
+          $triage = (Resolve-Path "docs/evidence/windows-triage.html").Path.Replace("\","/")
+          $tests = (Resolve-Path "docs/evidence/test-suite.html").Path.Replace("\","/")
+          & $browser --headless --disable-gpu --hide-scrollbars --window-size=1600,1200 --screenshot="$PWD\docs\screenshots\windows-triage-live.png" "file:///$triage"
+          & $browser --headless --disable-gpu --hide-scrollbars --window-size=1600,900 --screenshot="$PWD\docs\screenshots\test-suite-live.png" "file:///$tests"
+          if (-not (Test-Path "docs/screenshots/windows-triage-live.png")) { throw "Triage screenshot was not created." }
+          if (-not (Test-Path "docs/screenshots/test-suite-live.png")) { throw "Test screenshot was not created." }
+
+      - name: Commit verified evidence
+        shell: pwsh
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/evidence docs/screenshots/windows-triage-live.png docs/screenshots/test-suite-live.png
+          git diff --cached --quiet
+          if ($LASTEXITCODE -eq 0) {
+            Write-Host "No evidence changes to commit."
+            exit 0
+          }
+          git commit -m "docs: refresh verified Windows lab evidence"
+          git push
