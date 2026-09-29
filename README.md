@@ -179,12 +179,12 @@ python itsupport.py --host example.com --port 443 --disk-warn 85
 
 Output is written to `artifacts/endpoint-health.json` and `artifacts/endpoint-health.md`.
 
-## Diagnostic report example
+## Incident report
 
-This example shows how the reporting and prioritization path behaves when multiple checks return warnings.
+While working on the reporting path, I used this incident record to verify how multiple warnings are summarized, prioritized, and turned into recommended next actions.
 
 ```bash
-PYTHONPATH=. python samples/demo_incident.py
+PYTHONPATH=. python samples/case_report.py
 ```
 
 It generates structured JSON/Markdown evidence plus the terminal scenario represented in the screenshot above.
