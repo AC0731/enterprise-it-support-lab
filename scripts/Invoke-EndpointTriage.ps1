@@ -64,7 +64,7 @@ catch {
 $tcp = Test-NetConnection -ComputerName $TargetHost -Port 443 -WarningAction SilentlyContinue
 $results.Add((New-CheckResult -Name "tcp_443" -Status $(if ($tcp.TcpTestSucceeded) { "PASS" } else { "WARN" }) `
     -Severity $(if ($tcp.TcpTestSucceeded) { "info" } else { "medium" }) `
-    -Summary "TCP/443 to $TargetHost: $($tcp.TcpTestSucceeded)" `
+    -Summary "TCP/443 to ${TargetHost}: $($tcp.TcpTestSucceeded)" `
     -Data @{ RemoteAddress = [string]$tcp.RemoteAddress; SourceAddress = [string]$tcp.SourceAddress }))
 
 # Critical Windows services
