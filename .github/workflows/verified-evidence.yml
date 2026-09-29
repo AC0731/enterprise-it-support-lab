@@ -51,8 +51,8 @@ jobs:
       - name: Build evidence pages
         shell: pwsh
         run: |
-          python tools/build_evidence_page.py docs/evidence/windows-triage.txt docs/evidence/windows-triage.html "Windows endpoint triage — GitHub-hosted runner"
-          python tools/build_evidence_page.py docs/evidence/test-suite.txt docs/evidence/test-suite.html "Regression test suite — GitHub-hosted runner"
+          python tools/build_evidence_page.py docs/evidence/windows-triage.txt docs/evidence/windows-triage.html "Windows endpoint triage — verification session"
+          python tools/build_evidence_page.py docs/evidence/test-suite.txt docs/evidence/test-suite.html "Regression test suite — verification session"
 
       - name: Install browser automation
         shell: pwsh
