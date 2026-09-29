@@ -4,7 +4,7 @@ A practical endpoint-support and incident-triage lab built around the kind of wo
 
 The repository also keeps a visible troubleshooting history. The first diagnostic version contained three defects; regression tests were then added to reproduce them, followed by a separate repair commit and verification. This is intentional so the Git history shows investigation and correction rather than only a polished final state.
 
-> **Lab scope:** all endpoint names, asset details, incidents, and screenshots in this repository are fictional or locally generated. Nothing here represents access to a production company environment.
+> **Environment:** this is a controlled IT support lab. The verification evidence below was captured from a real GitHub-hosted Windows Server 2025 runner executing the repository scripts and tests. Sample incident records remain lab scenarios; no production company systems, credentials, or private data are used.
 
 ## What this project demonstrates
 
@@ -18,25 +18,29 @@ The repository also keeps a visible troubleshooting history. The first diagnosti
 - Git-based change history and GitHub Actions CI
 - Security-aware evidence handling and escalation notes
 
-## Evidence
+## Verified evidence
 
-### Incident triage output
+The screenshots in this section were captured automatically by Playwright from the output of **GitHub Actions run [36561149955](https://github.com/AC0731/enterprise-it-support-lab/actions/runs/36561149955)** on September 29, 2026. The run used a GitHub-hosted **Windows Server 2025 Datacenter** runner with Python 3.13.15.
 
-The demo below is generated from a deterministic support scenario: healthy endpoint inventory/disk state, failed DNS and HTTPS reachability, and a stopped Print Spooler service.
+### Live Windows endpoint triage
 
-![Incident triage terminal output](docs/screenshots/incident-triage.svg)
+The PowerShell triage script executed on the Windows runner and checked system inventory, fixed-disk utilization, DNS resolution, TCP/443 connectivity, and the Windows DNS Cache and Print Spooler services. All checks in the verified run passed with priority **P4 / risk score 0**.
+
+![Verified Windows endpoint triage](docs/screenshots/windows-triage-live.png)
+
+The raw output is committed at [`docs/evidence/windows-triage.txt`](docs/evidence/windows-triage.txt), with the structured report at [`docs/evidence/windows-endpoint-health.json`](docs/evidence/windows-endpoint-health.json).
 
 ### Regression verification
 
-The current suite verifies the collector defects discovered during the lab.
+The same run executed the collector and triage regression suite. **5 tests passed**.
 
-![Passing regression test suite](docs/screenshots/test-suite.svg)
+![Verified regression test suite](docs/screenshots/test-suite-live.png)
+
+The raw test output and run metadata are committed at [`docs/evidence/test-suite.txt`](docs/evidence/test-suite.txt) and [`docs/evidence/verification.json`](docs/evidence/verification.json).
 
 ### Troubleshooting history
 
-The repository history keeps defect reproduction and repair as separate commits.
-
-![Git commit history](docs/screenshots/commit-history.svg)
+The verification work also exposed real implementation issues: a PowerShell interpolation parse error, an HTML evidence-renderer template error, and a browser-capture invocation issue. Each was diagnosed from CI logs and corrected in a separate commit before the successful verification run. See [`docs/incidents/INC-002-evidence-pipeline.md`](docs/incidents/INC-002-evidence-pipeline.md).
 
 ## Support workflow
 
@@ -73,7 +77,8 @@ enterprise-it-support-lab/
 ├── docs/
 │   ├── incidents/                     # Root-cause / defect notes
 │   ├── runbooks/                      # Technician troubleshooting runbooks
-│   ├── screenshots/                   # Generated evidence images
+│   ├── evidence/                      # Raw verified CI output and metadata
+│   ├── screenshots/                   # Browser screenshots from verified CI output
 │   ├── ESCALATION-MATRIX.md
 │   └── TROUBLESHOOTING-METHODOLOGY.md
 ├── samples/                           # Deterministic incident reports and demo
@@ -138,9 +143,9 @@ python itsupport.py --host example.com --port 443 --disk-warn 85
 
 Output is written to `artifacts/endpoint-health.json` and `artifacts/endpoint-health.md`.
 
-## Deterministic incident demo
+## Controlled incident demo
 
-The sample incident does not depend on live DNS, network connectivity, or a Windows host. This keeps the portfolio evidence reproducible.
+The sample incident is a separate controlled scenario used to exercise reporting and prioritization without depending on a specific external outage. It is not presented as production evidence.
 
 ```bash
 PYTHONPATH=. python samples/demo_incident.py
@@ -168,7 +173,7 @@ The full incident note is in [`docs/incidents/INC-001-diagnostic-regressions.md`
 
 GitHub Actions compiles the Python sources and runs the test suite on Python 3.11, 3.12, and 3.13 for pushes and pull requests.
 
-The support toolkit itself uses only the Python standard library. The optional documentation rendering helper under `tools/` uses Pillow.
+The support toolkit itself uses only the Python standard library. The manually dispatched verification workflow also runs the PowerShell triage script on Windows and uses Playwright to capture browser screenshots from the resulting evidence pages.
 
 ## Runbooks
 
@@ -212,14 +217,17 @@ See [`SECURITY.md`](SECURITY.md) for the project data-handling rules.
 
 **Visible troubleshooting history.** The repository retains the regression reproduction and later fix as separate commits.
 
-## Local verification status
+## Verification status
 
-At the time the evidence screenshots were generated:
+Latest verified evidence run: **[GitHub Actions #36561149955](https://github.com/AC0731/enterprise-it-support-lab/actions/runs/36561149955)**.
 
-```text
-Ran 5 tests
-OK
-```
+- Windows Server 2025 Datacenter runner
+- DNS resolution: PASS
+- TCP/443 to `www.microsoft.com`: PASS
+- DNS Cache service: PASS
+- Print Spooler service: PASS
+- Disk threshold checks: PASS
+- Regression suite: **5/5 PASS**
 
 See [`CHANGELOG.md`](CHANGELOG.md) for the project progression.
 
