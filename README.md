@@ -1,6 +1,6 @@
 # Enterprise IT Support Lab
 
-A Windows endpoint-support and incident-triage engineering project focused on evidence-first troubleshooting, fault isolation across endpoint/network/service layers, controlled PowerShell remediation, and escalation-ready technical documentation.
+A Windows endpoint-support and incident-triage engineering project focused on evidence-first troubleshooting, fault isolation across endpoint/network/service layers, preview-first PowerShell remediation, and escalation-ready technical documentation.
 
 While building the toolkit, I ran into several defects in the diagnostic logic. I added regression coverage as I isolated each bug, fixed the root cause in later commits, and kept the history so the troubleshooting process is visible.
 
@@ -32,7 +32,7 @@ The raw output is committed at [`docs/evidence/windows-triage.txt`](docs/evidenc
 
 ### Regression verification
 
-The same run executed the collector and triage regression suite. **5 tests passed**.
+The Windows verification session also executed the collector and triage regression suite. **5 tests passed**.
 
 ![Verified regression test suite](docs/screenshots/test-suite-live.png)
 
@@ -59,7 +59,9 @@ PYTHONPATH=. python samples/troubleshooting_cases.py
 python -m unittest discover -s tests -v
 ```
 
-The committed before/after evidence is in [`docs/evidence/incidents/troubleshooting-cases.md`](docs/evidence/incidents/troubleshooting-cases.md).
+The WARN → PASS results in these troubleshooting cases come from the automated regression/case harness that exercises the same collector logic. They are separate from the live Windows Server health verification above.
+
+The committed case evidence is in [`docs/evidence/incidents/troubleshooting-cases.md`](docs/evidence/incidents/troubleshooting-cases.md).
 
 Remediation helpers default to preview/no-change behavior:
 
@@ -117,7 +119,7 @@ enterprise-it-support-lab/
 │   ├── screenshots/                   # Verification evidence
 │   ├── ESCALATION-MATRIX.md
 │   └── TROUBLESHOOTING-METHODOLOGY.md
-├── samples/                           # Deterministic incident reports and demo
+├── samples/                           # Troubleshooting reports and case evidence
 ├── config/policy.json                 # Lab thresholds / priority definitions
 ├── .github/workflows/ci.yml           # Python compile + unit test matrix
 ├── SECURITY.md
@@ -218,7 +220,7 @@ The support toolkit itself uses only the Python standard library. Continuous int
 | [`DNS-resolution-failure.md`](docs/runbooks/DNS-resolution-failure.md) | Resolver assignment, split DNS, scope, evidence before cache changes |
 | [`VPN-connectivity.md`](docs/runbooks/VPN-connectivity.md) | Internet vs tunnel vs DNS/routing vs authentication separation |
 | [`Print-spooler.md`](docs/runbooks/Print-spooler.md) | Queue scope, service state, event evidence, driver/server escalation |
-| [`Disk-pressure.md`](docs/runbooks/Disk-pressure.md) | Capacity triage and controlled cleanup |
+| [`Disk-pressure.md`](docs/runbooks/Disk-pressure.md) | Capacity triage and preview-first cleanup |
 | [`Account-lockout-MFA.md`](docs/runbooks/Account-lockout-MFA.md) | Identity verification, stale credentials, MFA/sign-in evidence |
 
 ## Escalation standard
