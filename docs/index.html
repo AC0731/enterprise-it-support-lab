@@ -59,9 +59,9 @@
       <div class="wrap">
         <div class="kicker">Troubleshooting history</div>
         <h2>Failures are kept visible.</h2>
-        <p>The project history includes defects found during testing and Windows verification instead of presenting only a final polished state.</p>
+        <p>The project history keeps the bugs I ran into during development and Windows verification, together with the fixes and retests.</p>
         <div class="timeline">
-          <div class="event"><strong>Collector regression</strong><p>Disk threshold logic, DNS exception containment, and service-state normalization were reproduced with tests and repaired in later commits.</p></div>
+          <div class="event"><strong>Collector regression</strong><p>While expanding the collector, I found bugs in disk threshold logic, DNS exception handling, and service-state normalization. I added regression coverage, fixed each root cause, and retested the collector.</p></div>
           <div class="event"><strong>Windows compatibility issue</strong><p>A PowerShell interpolation error surfaced during Windows verification. The failing expression was isolated, corrected, and retested successfully.</p></div>
           <div class="event"><strong>Reporting pipeline</strong><p>A Python evidence-template issue was identified during verification, corrected, and validated before the final documentation pass.</p></div>
         </div>
