@@ -149,7 +149,9 @@ The script lists the affected files and size first. After cleanup, I repeated th
 
 Unexpected application or log growth is escalated to the application owner before business/application data is removed.
 
-## Verification
+## Verification source
+
+The WARN → PASS transitions below are regression/case-harness results using the project collector functions. They are not the same evidence as the separate Windows Server 2025 health verification in the repository README and screenshots.
 
 ```bash
 PYTHONPATH=. python samples/troubleshooting_cases.py
