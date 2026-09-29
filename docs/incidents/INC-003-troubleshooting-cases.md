@@ -19,7 +19,7 @@ A required hostname does not resolve even though general IP connectivity is stil
 - VPN/split-DNS issue
 - upstream resolver outage
 
-### Evidence sequence
+### Endpoint investigation sequence
 
 ```powershell
 ipconfig /all
@@ -27,7 +27,7 @@ Resolve-DnsName support.lab.example
 Test-NetConnection 1.1.1.1 -Port 443
 ```
 
-Observed states:
+Regression case states:
 
 ```text
 Before: WARN — DNS resolution for support.lab.example failed: resolver unavailable
@@ -38,14 +38,14 @@ After:  PASS — Resolved support.lab.example to 1 address(es)
 
 Successful IP connectivity with failed name resolution narrowed the problem to DNS rather than a general network outage.
 
-### Change and verification
+### Endpoint remediation path
 
 ```powershell
 .\scripts\Repair-NetworkStack.ps1 -FlushDns -WhatIf
 .\scripts\Repair-NetworkStack.ps1 -FlushDns
 ```
 
-I kept the resolver configuration as evidence before clearing the cache, then repeated the lookup to confirm name resolution recovered.
+The case harness verifies the DNS collector transition from WARN to PASS. On a Windows endpoint, I would capture the resolver configuration before clearing the cache, then repeat the lookup to verify whether name resolution recovered.
 
 ### Escalation
 
@@ -67,7 +67,7 @@ Print jobs cannot be processed and the Print Spooler is stopped.
 - print-server/network issue
 - repeated spooler fault after a recent change
 
-### Evidence sequence
+### Endpoint investigation sequence
 
 ```powershell
 Get-Service Spooler
@@ -75,7 +75,7 @@ Get-WinEvent -LogName System -MaxEvents 50
 Get-WinEvent -LogName Microsoft-Windows-PrintService/Operational -MaxEvents 50
 ```
 
-Observed states:
+Regression case states:
 
 ```text
 Before: WARN — Print Spooler status is Stopped
@@ -84,9 +84,9 @@ After:  PASS — Print Spooler status is Running
 
 ### Troubleshooting decision
 
-I checked service state and event evidence before changing the service state so a restart did not hide the useful pre-change evidence.
+The case harness verifies the service-state transition from WARN to PASS. On a Windows endpoint, I would check service state and event evidence before changing the service state so a restart does not hide useful pre-change evidence.
 
-### Change and verification
+### Endpoint remediation path
 
 ```powershell
 .\scripts\Repair-Service.ps1 -Name Spooler
@@ -94,7 +94,7 @@ I checked service state and event evidence before changing the service state so 
 .\scripts\Repair-Service.ps1 -Name Spooler -Execute
 ```
 
-After the service change, I checked the service state again and compared it with the original symptom.
+After a service change on a Windows endpoint, I would re-check the service state and compare it with the original symptom. The WARN → PASS value shown above is produced by the regression case harness, not the separate Windows Server health verification.
 
 ### Escalation
 
@@ -116,7 +116,7 @@ The system volume reaches 93% utilization against an 85% warning threshold.
 - update/cache growth
 - legitimate business data growth
 
-### Evidence sequence
+### Endpoint investigation sequence
 
 ```powershell
 Get-CimInstance Win32_LogicalDisk -Filter "DriveType=3"
@@ -125,7 +125,7 @@ Get-ChildItem $env:TEMP -File -Recurse -ErrorAction SilentlyContinue |
   Select-Object -First 20 FullName,Length,LastWriteTime
 ```
 
-Observed states:
+Regression case states:
 
 ```text
 Before: WARN — Disk usage is 93.0% (warning threshold 85%)
@@ -134,16 +134,16 @@ After:  PASS — Disk usage is 68.0% (warning threshold 85%)
 
 ### Troubleshooting decision
 
-I identified the largest approved temporary/log consumers before deleting anything rather than doing a broad cleanup.
+The case harness verifies the disk-threshold transition from WARN to PASS. On a Windows endpoint, I would identify the largest approved temporary/log consumers before deleting anything rather than doing a broad cleanup.
 
-### Change and verification
+### Endpoint remediation path
 
 ```powershell
 .\scripts\Invoke-DiskCleanup.ps1 -Path $env:TEMP -OlderThanDays 7
 .\scripts\Invoke-DiskCleanup.ps1 -Path $env:TEMP -OlderThanDays 7 -Execute -WhatIf
 ```
 
-The script lists the affected files and size first. After cleanup, I repeated the disk check to verify the original threshold problem was gone.
+The script is designed to list the affected files and size first. On a Windows endpoint, I would repeat the disk check after cleanup to verify whether the original threshold problem was gone. The WARN → PASS value shown above comes from the regression case harness.
 
 ### Escalation
 
@@ -151,7 +151,7 @@ Unexpected application or log growth is escalated to the application owner befor
 
 ## Verification source
 
-The WARN → PASS transitions below are regression/case-harness results using the project collector functions. They are not the same evidence as the separate Windows Server 2025 health verification in the repository README and screenshots.
+The WARN → PASS transitions below are regression/case-harness results using the project collector functions. The PowerShell commands in each case document the corresponding Windows investigation/remediation path; those case-harness transitions are separate from the live Windows Server 2025 health verification in the repository README and screenshots.
 
 ```bash
 PYTHONPATH=. python samples/troubleshooting_cases.py
