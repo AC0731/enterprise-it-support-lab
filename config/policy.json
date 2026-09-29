@@ -1,0 +1,11 @@
+{
+  "disk_warning_percent": 85,
+  "tcp_timeout_seconds": 2,
+  "default_health_target": "example.com",
+  "incident_priorities": {
+    "P1": "Critical outage or severe business impact",
+    "P2": "Major degradation affecting multiple users",
+    "P3": "Single-user or limited-scope degradation",
+    "P4": "Informational or routine service request"
+  }
+}
