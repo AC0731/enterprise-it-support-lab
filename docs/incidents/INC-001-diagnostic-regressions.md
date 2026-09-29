@@ -24,3 +24,20 @@ python -m unittest discover -s tests -v
 ```
 
 The regression suite is intentionally committed before the repair so the defect discovery is visible in repository history.
+
+## Root cause
+
+- Disk check used `<` instead of `>=` when evaluating the warning threshold.
+- DNS lookup was not wrapped in exception handling, so resolver failures escaped the collector boundary.
+- Service status comparison used a raw, case-sensitive string.
+
+## Resolution
+
+- Corrected disk threshold logic and added threshold validation.
+- Converted DNS resolver exceptions into structured `WARN` results so remaining checks continue.
+- Normalized service state with `strip().upper()` before evaluation.
+- Added port and timeout validation to harden TCP checks while touching the collector layer.
+
+## Verification
+
+The complete unit test suite passes after the repair.

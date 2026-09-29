@@ -24,10 +24,12 @@ def system_inventory() -> CheckResult:
 
 
 def disk_health(path: str = "/", warn_percent: int = 85) -> CheckResult:
+    if not 1 <= warn_percent <= 100:
+        raise ValueError("warn_percent must be between 1 and 100")
+
     usage = shutil.disk_usage(Path(path))
     used_percent = round((usage.used / usage.total) * 100, 1)
-    # BUG: comparison is reversed. Healthy disks can be warned while full disks pass.
-    status = "WARN" if used_percent < warn_percent else "PASS"
+    status = "WARN" if used_percent >= warn_percent else "PASS"
     return CheckResult(
         name="disk_health",
         status=status,
@@ -38,17 +40,30 @@ def disk_health(path: str = "/", warn_percent: int = 85) -> CheckResult:
 
 
 def dns_health(hostname: str = "example.com") -> CheckResult:
-    # BUG: one failed lookup raises an exception and aborts the entire diagnostic run.
-    addresses = sorted({item[4][0] for item in socket.getaddrinfo(hostname, 443)})
-    return CheckResult(
-        name="dns_health",
-        status="PASS",
-        summary=f"Resolved {hostname} to {len(addresses)} address(es)",
-        data={"hostname": hostname, "addresses": addresses},
-    )
+    try:
+        addresses = sorted({item[4][0] for item in socket.getaddrinfo(hostname, 443)})
+        return CheckResult(
+            name="dns_health",
+            status="PASS",
+            summary=f"Resolved {hostname} to {len(addresses)} address(es)",
+            data={"hostname": hostname, "addresses": addresses},
+        )
+    except OSError as exc:
+        return CheckResult(
+            name="dns_health",
+            status="WARN",
+            severity="medium",
+            summary=f"DNS resolution for {hostname} failed: {exc}",
+            data={"hostname": hostname, "addresses": [], "error": str(exc)},
+        )
 
 
 def tcp_health(hostname: str = "example.com", port: int = 443, timeout: float = 2.0) -> CheckResult:
+    if not 1 <= port <= 65535:
+        raise ValueError("port must be between 1 and 65535")
+    if timeout <= 0:
+        raise ValueError("timeout must be greater than zero")
+
     try:
         with socket.create_connection((hostname, port), timeout=timeout):
             return CheckResult(
@@ -63,17 +78,21 @@ def tcp_health(hostname: str = "example.com", port: int = 443, timeout: float = 
             status="WARN",
             severity="medium",
             summary=f"TCP connection to {hostname}:{port} failed: {exc}",
-            data={"hostname": hostname, "port": port, "timeout": timeout},
+            data={"hostname": hostname, "port": port, "timeout": timeout, "error": str(exc)},
         )
 
 
 def service_health(service_name: str, observed_status: str) -> CheckResult:
-    # BUG: service state is checked case-sensitively.
-    healthy = observed_status == "RUNNING"
+    normalized = observed_status.strip().upper()
+    healthy = normalized == "RUNNING"
     return CheckResult(
         name=f"service:{service_name}",
         status="PASS" if healthy else "WARN",
         severity="medium" if not healthy else "info",
         summary=f"{service_name} status is {observed_status}",
-        data={"service": service_name, "observed_status": observed_status},
+        data={
+            "service": service_name,
+            "observed_status": observed_status,
+            "normalized_status": normalized,
+        },
     )
