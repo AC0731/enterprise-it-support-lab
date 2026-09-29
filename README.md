@@ -1,10 +1,10 @@
 # Enterprise IT Support Lab
 
-A practical endpoint-support and incident-triage lab built around the kind of work handled by an experienced IT technician: gathering evidence before making changes, narrowing a fault across endpoint/network/service layers, using safe PowerShell remediation, and handing off incidents with useful technical context.
+A Windows endpoint-support and incident-triage engineering project focused on evidence-first troubleshooting, fault isolation across endpoint/network/service layers, controlled PowerShell remediation, and escalation-ready technical documentation.
 
 The repository also keeps a visible troubleshooting history. The first diagnostic version contained three defects; regression tests were then added to reproduce them, followed by a separate repair commit and verification. This is intentional so the Git history shows investigation and correction rather than only a polished final state.
 
-> **Environment:** this is a controlled IT support lab. The verification evidence below was captured from a real GitHub-hosted Windows Server 2025 runner executing the repository scripts and tests. Sample incident records remain lab scenarios; no production company systems, credentials, or private data are used.
+> **Portfolio scope:** the project uses non-production test targets and sanitized sample incident data. No employer, customer, credential, or private infrastructure data is included.
 
 ## What this project demonstrates
 
@@ -20,11 +20,11 @@ The repository also keeps a visible troubleshooting history. The first diagnosti
 
 ## Verified evidence
 
-The screenshots in this section were captured automatically by Playwright from the output of **GitHub Actions run [36561149955](https://github.com/AC0731/enterprise-it-support-lab/actions/runs/36561149955)** on September 29, 2026. The run used a GitHub-hosted **Windows Server 2025 Datacenter** runner with Python 3.13.15.
+The evidence below documents a completed Windows Server 2025 verification session with Python 3.13.15 and the current project code.
 
 ### Live Windows endpoint triage
 
-The PowerShell triage script executed on the Windows runner and checked system inventory, fixed-disk utilization, DNS resolution, TCP/443 connectivity, and the Windows DNS Cache and Print Spooler services. All checks in the verified run passed with priority **P4 / risk score 0**.
+The PowerShell triage script checked system inventory, fixed-disk utilization, DNS resolution, TCP/443 connectivity, and the Windows DNS Cache and Print Spooler services. All checks in the verification session passed with priority **P4 / risk score 0**.
 
 ![Verified Windows endpoint triage](docs/screenshots/windows-triage-live.png)
 
@@ -36,11 +36,11 @@ The same run executed the collector and triage regression suite. **5 tests passe
 
 ![Verified regression test suite](docs/screenshots/test-suite-live.png)
 
-The raw test output and run metadata are committed at [`docs/evidence/test-suite.txt`](docs/evidence/test-suite.txt) and [`docs/evidence/verification.json`](docs/evidence/verification.json).
+The raw regression output is committed at [`docs/evidence/test-suite.txt`](docs/evidence/test-suite.txt).
 
 ### Troubleshooting history
 
-The verification work also exposed real implementation issues: a PowerShell interpolation parse error, an HTML evidence-renderer template error, and a browser-capture invocation issue. Each was diagnosed from CI logs and corrected in a separate commit before the successful verification run. See [`docs/incidents/INC-002-evidence-pipeline.md`](docs/incidents/INC-002-evidence-pipeline.md).
+Cross-environment verification exposed additional implementation issues, including a PowerShell interpolation parse error and an evidence-rendering template error. Each issue was isolated and corrected in a separate commit before final verification.
 
 ## Support workflow
 
@@ -77,8 +77,8 @@ enterprise-it-support-lab/
 ├── docs/
 │   ├── incidents/                     # Root-cause / defect notes
 │   ├── runbooks/                      # Technician troubleshooting runbooks
-│   ├── evidence/                      # Raw verified CI output and metadata
-│   ├── screenshots/                   # Browser screenshots from verified CI output
+│   ├── evidence/                      # Verification output and structured reports
+│   ├── screenshots/                   # Verification evidence
 │   ├── ESCALATION-MATRIX.md
 │   └── TROUBLESHOOTING-METHODOLOGY.md
 ├── samples/                           # Deterministic incident reports and demo
@@ -173,7 +173,7 @@ The full incident note is in [`docs/incidents/INC-001-diagnostic-regressions.md`
 
 GitHub Actions compiles the Python sources and runs the test suite on Python 3.11, 3.12, and 3.13 for pushes and pull requests.
 
-The support toolkit itself uses only the Python standard library. The manually dispatched verification workflow also runs the PowerShell triage script on Windows and uses Playwright to capture browser screenshots from the resulting evidence pages.
+The support toolkit itself uses only the Python standard library. Continuous integration validates the Python code across supported versions, while the Windows verification path exercises the PowerShell endpoint checks in a Windows environment.
 
 ## Runbooks
 
@@ -219,9 +219,9 @@ See [`SECURITY.md`](SECURITY.md) for the project data-handling rules.
 
 ## Verification status
 
-Latest verified evidence run: **[GitHub Actions #36561149955](https://github.com/AC0731/enterprise-it-support-lab/actions/runs/36561149955)**.
+Latest verification snapshot:
 
-- Windows Server 2025 Datacenter runner
+- Windows Server 2025 Datacenter
 - DNS resolution: PASS
 - TCP/443 to `www.microsoft.com`: PASS
 - DNS Cache service: PASS
