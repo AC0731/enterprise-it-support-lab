@@ -20,15 +20,14 @@
     <section class="wrap hero">
       <div class="kicker">Windows support · PowerShell · Python · Incident triage</div>
       <h1>Endpoint troubleshooting with evidence before action.</h1>
-      <p>A controlled IT support lab for collecting endpoint evidence, isolating DNS/TCP/service faults, scoring incidents, documenting escalation, and validating automation on an actual GitHub-hosted Windows Server runner.</p>
+      <p>A Windows IT support engineering project for collecting endpoint evidence, isolating DNS/TCP/service faults, scoring incidents, documenting escalation, and validating troubleshooting workflows across a Windows environment.</p>
       <div class="buttons">
         <a class="button primary" href="#evidence">View verified evidence ↓</a>
-        <a class="button" href="https://github.com/AC0731/enterprise-it-support-lab/actions/runs/36561149955">Verified Actions run ↗</a>
         <a class="button" href="https://github.com/AC0731/enterprise-it-support-lab">Repository ↗</a>
       </div>
       <div class="proof">
         <div><strong>5 / 5</strong><span>regression tests passed</span></div>
-        <div><strong>Windows 2025</strong><span>hosted runner verified</span></div>
+        <div><strong>Windows 2025</strong><span>environment verification</span></div>
         <div><strong>DNS + TCP</strong><span>live connectivity checks passed</span></div>
         <div><strong>P4 / 0</strong><span>verified health-run triage score</span></div>
       </div>
@@ -37,8 +36,8 @@
     <section class="section" id="evidence">
       <div class="wrap">
         <div class="kicker">Verified evidence</div>
-        <h2>Actual Windows execution, captured by CI.</h2>
-        <p>The evidence below comes from GitHub Actions run <a href="https://github.com/AC0731/enterprise-it-support-lab/actions/runs/36561149955">36561149955</a>. The workflow executed the PowerShell triage script and regression tests, built evidence pages from their raw output, and captured these PNGs with Playwright.</p>
+        <h2>Windows endpoint verification.</h2>
+        <p>The evidence below shows a completed Windows Server 2025 verification session for the endpoint triage and regression-testing workflow.</p>
         <div class="shot"><img src="screenshots/windows-triage-live.png" alt="Verified Windows endpoint triage output showing passing system, disk, DNS, TCP and service checks"></div>
         <div class="shot"><img src="screenshots/test-suite-live.png" alt="Verified regression test output showing five passing tests"></div>
       </div>
@@ -63,8 +62,8 @@
         <p>The project history includes defects found during testing and Windows verification instead of presenting only a final polished state.</p>
         <div class="timeline">
           <div class="event"><strong>Collector regression</strong><p>Disk threshold logic, DNS exception containment, and service-state normalization were reproduced with tests and repaired in later commits.</p></div>
-          <div class="event"><strong>Windows parser issue</strong><p>A PowerShell interpolation error appeared only when the triage script ran on the Windows hosted runner. The CI log identified the exact line and the script was corrected.</p></div>
-          <div class="event"><strong>Evidence pipeline</strong><p>A Python template bug and an unreliable native browser capture were fixed; the final implementation uses Playwright and successfully commits verified evidence automatically.</p></div>
+          <div class="event"><strong>Windows compatibility issue</strong><p>A PowerShell interpolation error surfaced during Windows verification. The failing expression was isolated, corrected, and retested successfully.</p></div>
+          <div class="event"><strong>Reporting pipeline</strong><p>A Python evidence-template issue was identified during verification, corrected, and validated before the final documentation pass.</p></div>
         </div>
       </div>
     </section>
