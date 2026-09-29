@@ -54,21 +54,17 @@ jobs:
           python tools/build_evidence_page.py docs/evidence/windows-triage.txt docs/evidence/windows-triage.html "Windows endpoint triage — GitHub-hosted runner"
           python tools/build_evidence_page.py docs/evidence/test-suite.txt docs/evidence/test-suite.html "Regression test suite — GitHub-hosted runner"
 
+      - name: Install browser automation
+        shell: pwsh
+        run: |
+          python -m pip install --disable-pip-version-check playwright
+          python -m playwright install chromium
+
       - name: Capture browser screenshots
         shell: pwsh
         run: |
           New-Item -ItemType Directory -Force -Path docs/screenshots | Out-Null
-          $candidates = @(
-            "C:\Program Files\Google\Chrome\Application\chrome.exe",
-            "C:\Program Files\Microsoft\Edge\Application\msedge.exe",
-            "C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe"
-          )
-          $browser = $candidates | Where-Object { Test-Path $_ } | Select-Object -First 1
-          if (-not $browser) { throw "No supported browser found on runner." }
-          $triage = (Resolve-Path "docs/evidence/windows-triage.html").Path.Replace("\","/")
-          $tests = (Resolve-Path "docs/evidence/test-suite.html").Path.Replace("\","/")
-          & $browser --headless --disable-gpu --hide-scrollbars --window-size=1600,1200 --screenshot="$PWD\docs\screenshots\windows-triage-live.png" "file:///$triage"
-          & $browser --headless --disable-gpu --hide-scrollbars --window-size=1600,900 --screenshot="$PWD\docs\screenshots\test-suite-live.png" "file:///$tests"
+          python tools/capture_evidence.py
           if (-not (Test-Path "docs/screenshots/windows-triage-live.png")) { throw "Triage screenshot was not created." }
           if (-not (Test-Path "docs/screenshots/test-suite-live.png")) { throw "Test screenshot was not created." }
 
