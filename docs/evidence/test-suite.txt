@@ -5,7 +5,7 @@ test_critical_failure_maps_to_p1 (test_triage.TriageTests.test_critical_failure_
 test_medium_warning_maps_to_p3 (test_triage.TriageTests.test_medium_warning_maps_to_p3) ... ok
 
 ----------------------------------------------------------------------
-Ran 5 tests in 0.007s
+Ran 5 tests in 0.006s
 
 OK
 

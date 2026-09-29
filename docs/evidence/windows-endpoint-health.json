@@ -1,5 +1,5 @@
 {
-  "GeneratedAtUtc": "2026-09-29T11:21:10.3517407Z",
+  "GeneratedAtUtc": "2026-09-29T11:36:58.4630017Z",
   "ComputerName": "runnervm99s1a",
   "Priority": "P4",
   "RiskScore": 0,
@@ -11,18 +11,18 @@
       "Summary": "Microsoft Windows Server 2025 Datacenter 10.0.26100 on Virtual Machine",
       "Data": {
         "Manufacturer": "Microsoft Corporation",
-        "Model": "Virtual Machine",
-        "ComputerName": "runnervm99s1a"
+        "ComputerName": "runnervm99s1a",
+        "Model": "Virtual Machine"
       }
     },
     {
       "Name": "disk:C:",
       "Status": "PASS",
       "Severity": "info",
-      "Summary": "C: is 78.5% utilized",
+      "Summary": "C: is 78.4% utilized",
       "Data": {
-        "FreeBytes": 34439962624,
-        "UsedPercent": 78.5,
+        "FreeBytes": 34623729664,
+        "UsedPercent": 78.4,
         "SizeBytes": 160467759104
       }
     },
@@ -32,7 +32,7 @@
       "Severity": "info",
       "Summary": "D: is 2% utilized",
       "Data": {
-        "FreeBytes": 157856333824,
+        "FreeBytes": 157856079872,
         "UsedPercent": 2.0,
         "SizeBytes": 161059172352
       }
@@ -43,10 +43,10 @@
       "Severity": "info",
       "Summary": "Resolved www.microsoft.com to 1 IPv4 address(es)",
       "Data": {
-        "Host": "www.microsoft.com",
         "Addresses": [
           "23.54.42.39"
-        ]
+        ],
+        "Host": "www.microsoft.com"
       }
     },
     {
@@ -80,63 +80,70 @@
   ],
   "RecentErrors": [
     {
-      "TimeCreated": "2026-09-29T11:20:48.3277448+00:00",
+      "TimeCreated": "2026-09-29T10:59:21.9352934+00:00",
+      "LogName": "System",
+      "ProviderName": "Service Control Manager",
+      "Id": 7000,
+      "Message": "The Microsoft Edge Update Service (edgeupdate) service failed to start due to the following error: \r\nThe system cannot find the file specified."
+    },
+    {
+      "TimeCreated": "2026-09-29T10:58:44.0230934+00:00",
       "LogName": "System",
       "ProviderName": "Service Control Manager",
       "Id": 7031,
       "Message": "The RdAgent service terminated unexpectedly.  It has done this 1 time(s).  The following corrective action will be taken in 0 milliseconds: Restart the service."
     },
     {
-      "TimeCreated": "2026-09-29T11:19:35.4046056+00:00",
+      "TimeCreated": "2026-09-29T10:57:35.7235825+00:00",
       "LogName": "Application",
       "ProviderName": "Microsoft-Windows-Security-SPP",
       "Id": 16398,
       "Message": "Error occured during grace period 0x80070490 at No grace timer found."
     },
     {
-      "TimeCreated": "2026-09-29T11:19:35.1666738+00:00",
+      "TimeCreated": "2026-09-29T10:57:35.3350606+00:00",
       "LogName": "Application",
       "ProviderName": "Microsoft-Windows-Security-SPP",
       "Id": 16398,
       "Message": "Error occured during grace period 0x80070490 at No grace timer found."
     },
     {
-      "TimeCreated": "2026-09-29T11:19:35.072956+00:00",
+      "TimeCreated": "2026-09-29T10:57:35.2549893+00:00",
       "LogName": "Application",
       "ProviderName": "Microsoft-Windows-Security-SPP",
       "Id": 16398,
       "Message": "Error occured during grace period 0x80070490 at No grace timer found."
     },
     {
-      "TimeCreated": "2026-09-29T11:19:33.2593038+00:00",
+      "TimeCreated": "2026-09-29T10:57:33.6715096+00:00",
       "LogName": "Application",
       "ProviderName": "Microsoft-Windows-Security-SPP",
       "Id": 16398,
       "Message": "Error occured during grace period 0x80070490 at No grace timer found."
     },
     {
-      "TimeCreated": "2026-09-29T11:19:32.7624176+00:00",
+      "TimeCreated": "2026-09-29T10:57:32.7060804+00:00",
       "LogName": "Application",
       "ProviderName": "Microsoft-Windows-Security-SPP",
       "Id": 16398,
       "Message": "Error occured during grace period 0x80070490 at No grace timer found."
     },
     {
-      "TimeCreated": "2026-09-29T11:19:14.1578728+00:00",
+      "TimeCreated": "2026-09-29T10:57:15.8520579+00:00",
       "LogName": "System",
       "ProviderName": "Microsoft-Windows-Hyper-V-Netvsc",
       "Id": 51,
       "Message": "Failed NetVsc VF association with VfSerialNumber (1) FailureReason (Unknown.) Status (The object was not found.)"
     },
     {
-      "TimeCreated": "2026-09-29T11:19:14.1571074+00:00",
+      "TimeCreated": "2026-09-29T10:57:15.8512177+00:00",
       "LogName": "System",
       "ProviderName": "Microsoft-Windows-Hyper-V-Netvsc",
       "Id": 51,
       "Message": "Failed NetVsc VF association with VfSerialNumber (1) FailureReason (Unknown.) Status (The object was not found.)"
     },
     {
-      "TimeCreated": "2026-09-29T11:19:00.3876201+00:00",
+      "TimeCreated": "2026-09-29T10:57:02.3673588+00:00",
       "LogName": "System",
       "ProviderName": "volmgr",
       "Id": 46,

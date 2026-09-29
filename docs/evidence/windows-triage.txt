@@ -2,7 +2,7 @@
 Name             Status Severity Summary
 ----             ------ -------- -------
 system_inventory PASS   info     Microsoft Windows Server 2025 Datacenter 10.0.26100 on Virtual Machine
-disk:C:          PASS   info     C: is 78.5% utilized
+disk:C:          PASS   info     C: is 78.4% utilized
 disk:D:          PASS   info     D: is 2% utilized
 dns_health       PASS   info     Resolved www.microsoft.com to 1 IPv4 address(es)
 tcp_443          PASS   info     TCP/443 to www.microsoft.com: True
