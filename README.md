@@ -42,6 +42,42 @@ The raw regression output is committed at [`docs/evidence/test-suite.txt`](docs/
 
 Cross-environment verification exposed additional implementation issues, including a PowerShell interpolation parse error and an evidence-rendering template error. Each issue was isolated and corrected in a separate commit before final verification.
 
+## Controlled failure case studies
+
+The healthy verification run proves the collector works on a Windows environment. The scenarios below exercise what happens when something is actually wrong.
+
+| Incident | Before | After | Troubleshooting focus |
+|---|---|---|---|
+| [DNS resolution failure](docs/incidents/INC-003-controlled-troubleshooting-scenarios.md#1-dns-resolution-failure) | WARN | PASS | Separate DNS failure from general connectivity; capture resolver state before cache changes |
+| [Print Spooler outage](docs/incidents/INC-003-controlled-troubleshooting-scenarios.md#2-print-spooler-service-outage) | WARN | PASS | Check service/event evidence before changing service state |
+| [Disk pressure](docs/incidents/INC-003-controlled-troubleshooting-scenarios.md#3-disk-pressure) | WARN | PASS | Identify approved cleanup scope, preview the change, then verify the original threshold |
+
+Reproduce the sanitized evidence:
+
+```bash
+PYTHONPATH=. python samples/controlled_incidents.py
+python -m unittest discover -s tests -v
+```
+
+The committed before/after evidence is in [`docs/evidence/incidents/controlled-incidents.md`](docs/evidence/incidents/controlled-incidents.md).
+
+Remediation helpers default to preview/no-change behavior:
+
+```powershell
+# DNS cache
+.\scripts\Repair-NetworkStack.ps1 -FlushDns -WhatIf
+
+# Stopped service: preview by default
+.\scripts\Repair-Service.ps1 -Name Spooler
+.\scripts\Repair-Service.ps1 -Name Spooler -Execute -WhatIf
+
+# Aged temporary files: inventory/preview by default
+.\scripts\Invoke-DiskCleanup.ps1 -Path $env:TEMP -OlderThanDays 7
+.\scripts\Invoke-DiskCleanup.ps1 -Path $env:TEMP -OlderThanDays 7 -Execute -WhatIf
+```
+
+These are controlled lab failures with sanitized data, not customer incidents.
+
 ## Support workflow
 
 ```mermaid
