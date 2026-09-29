@@ -1,0 +1,11 @@
+test_disk_warns_only_when_usage_is_above_threshold (test_collectors_regression.CollectorRegressionTests.test_disk_warns_only_when_usage_is_above_threshold) ... ok
+test_dns_failure_is_contained_as_diagnostic_result (test_collectors_regression.CollectorRegressionTests.test_dns_failure_is_contained_as_diagnostic_result) ... ok
+test_service_state_is_case_insensitive (test_collectors_regression.CollectorRegressionTests.test_service_state_is_case_insensitive) ... ok
+test_critical_failure_maps_to_p1 (test_triage.TriageTests.test_critical_failure_maps_to_p1) ... ok
+test_medium_warning_maps_to_p3 (test_triage.TriageTests.test_medium_warning_maps_to_p3) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.007s
+
+OK
+
